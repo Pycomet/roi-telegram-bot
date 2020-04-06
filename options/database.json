@@ -1,0 +1,27 @@
+{
+  "users": [
+    {
+      "name": "codeghfcgfred",
+      "id": 7877,
+      "balance": {
+        "btc": 0,
+        "xrp": 0
+      },
+      "is_new": true,
+      "investments": [],
+      "date_joined": "2020-04-03 05:44:55.730520"
+    },
+    {
+      "name": "Coronhjh a",
+      "id": 55343434,
+      "balance": {
+        "btc": 0,
+        "xrp": 0
+      },
+      "is_new": true,
+      "investments": [],
+      "date_joined": "2020-04-03 05:44:03.495687"
+    }
+  ]
+}
+

@@ -1,72 +1,36 @@
-## This is the object model representation for the Application
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, relationship
 
-class User:
+from sqlalchemy import Column, Integer, String, ForeignKey
+
+Base = declarative_base()
+
+engine = create_engine("sqlite:///database.db", echo=True)
+# Change encho to false before deploying
+
+class User(Base):
     """
-    This is the mina user onject representation
+    SqlAlchemy ORM for Bot Application
     """
+    __tablename__ = 'users'
 
-    data = []
+    id = Column(Integer, primary_key=True)
+    first_name = Column(String)
+    btc_balance = Column(Integer)
+    xrp_balance = Column(Integer)
+    date_joined = Column(String)
+    address = Column(String)
 
-    def __init__(self, name, id):
-        self.__name = name
-        self.__id = int(id)
-        self.__btc = 0
-        self.__xrp = 0
-        self.data.append(self)
-
-    def __str__(self):
-        return "{0}".format(self.__name)  
-
-    ## Setters
-    def add_btc(self, btc):
-        "Add Btc"
-        self.__btc += int(btc)
-
-    def add_xrp(self, xrp):
-        "Add Xrp"
-        self.__xrp += int(xrp)
-
-    def deduct_btc(self, btc):
-        "Withdraw Btc"
-        self.__btc -= int(btc)
-
-    def deduct_xrp(self, xrp):
-        "Withdraw Xrp"
-        self.__xrp -= int(xrp)
-
-    ## Getters
-    def get_id(self):
-        return "{0}".format(self.__id)
-
-    def get_btc_balance(self):
-        return "{0}".format(self.__btc)
-
-    def get_xrp_balance(self):
-        return "{0}".format(self.__xrp)
-
-    @classmethod
-    def get_user(cls, num):
-        "Get user object from id"
-        target = cls.data
-
-        for i in range(len(target)):
-            if num == target[i].__id:
-                return target[i]
-        return None
+    def __repr__(self):
+        return "<User(id='%d', name='%s')>" % (self.id, self.first_name)
 
 
+Base.metadata.create_all(bind=engine)
+Session = sessionmaker(bind=engine)
 
 
+session = Session()
 
 
-
-# person = User("codefred", 7877)
-# import pdb; pdb.set_trace()
-# print(person)
-
-# person.add_btc(400)
-
-# person.deduct_btc(20)
-# print(person.get_btc_balance())
-
-
+session.close()
