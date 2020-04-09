@@ -1,5 +1,5 @@
 #THIS DEFINES SPECIFIC ACTION IN THE APPLICATION
-from database import User, session
+from models import User, session
 from datetime import date
 
 
@@ -32,7 +32,7 @@ def create_user(message):
         date_joined = str(date.today()),
         address = 'gsvgdfv467ggf7w6gwyu484784', # Create New Receive Address
     )
-    session.commit()
+    session.add(user)
     return user
 
 
@@ -43,7 +43,7 @@ def add_btc_balance(user, amount):
     balance = float(user.btc_balance) + float(amount)
 
     user.btc_balance = float(balance)
-    session.commit()
+    session.add(user)
 
 
 def add_xrp_balance(user, amount):

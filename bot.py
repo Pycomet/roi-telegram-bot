@@ -23,7 +23,7 @@ def start(msg):
         emoji.emojize(
             """
     :circus_tent: Hello {0}, Welcome to ROI Party Bot  :circus_tent:
-            """.format(msg.from_user.name),
+            """.format(user.first_name),
             use_aliases=True,
         ),
         reply_markup=keyboard
@@ -91,7 +91,7 @@ def btc_withdraw2(msg):
     amount = float(msg.text)
     user = get_or_create_user(msg)
 
-    if float(user.balance) >= amount:
+    if float(user.btc_balance) >= amount:
         bot.send_message(
             user.id,
             emoji.emojize(
