@@ -5,15 +5,11 @@ from functions import *
 
 bot = telebot.TeleBot(TOKEN, threaded=True)
 
-user = ""
-
 @bot.message_handler(commands=['start'])
 def start(msg):
     """
     Starting ROIPartyBot
     """
-
-    global user
     user = get_or_create_user(msg)
     keyboard = main_menu()
 
@@ -35,8 +31,7 @@ def start(msg):
 @bot.message_handler(regexp='^Balance')
 def balance(msg):
     "Returns Balance"
-    # user = get_or_create_user(msg)
-
+    user = get_or_create_user(msg)
     bot.send_message(
         msg.from_user.id,
         """
@@ -52,7 +47,7 @@ def balance(msg):
 @bot.message_handler(regexp='^Deposit')
 def deposit(msg):
     "Deposit Function"
-    # user = get_or_create_user(msg)
+    user = get_or_create_user(msg)
     keyboard = deposit_keyboard()
 
     bot.send_message(
@@ -66,8 +61,7 @@ def deposit(msg):
 @bot.message_handler(regexp='^Withdraw')
 def withdraw(msg):
     "Withdraw Functions"
-
-    # user = get_or_create_user(msg)
+    user = get_or_create_user(msg)
     keyboard = withdraw_keyboard(btc=user.btc_balance, xrp=user.xrp_balance)
 
     bot.send_message(
@@ -221,13 +215,32 @@ def history(msg):
     """
     Returns the list of transactions on that account
     """
+    user = get_or_create_user(msg)
+    transactions = get_transactions_history(user)
 
-    # Get list of transactions
+    bot.reply_to(
+        msg,
+        emoji.emojize(
+            ":moneybag: LIST OF TRANSACTIONS :moneybag:",
+            use_aliases=True,
+        )
+    )
 
+    for transaction in transactions:
 
-
-
-
+        bot.send_message(
+            user.id,
+            emoji.emojize(
+                f"""
+    {transaction.title}
+Amount :point_right: {transaction.amount} {transaction.currency}
+Status :point_right: {transaction.status}
+Hash :point_right: {transaction.hash}
+Created on ----> {transaction.date_created}
+                """,
+                use_aliases=True,
+            ),
+        )
 
 
 # Callback Handlers

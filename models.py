@@ -42,8 +42,7 @@ class Transaction(Base):
     """
     __tablename__ = 'transaction'
 
-    id = Column(Integer, primary_key=True)
-    transaction_id = Column(String(50))
+    id = Column(String, primary_key=True)
     currency = Column(String(3))
     amount = Column(Integer)
     title = Column(String)
@@ -56,13 +55,13 @@ class Transaction(Base):
     def __repr__(self):
         return "<Tansaction(id='%s')>" % (self.id)
 
-Base.metadata.create_all(bind=engine)
-Session = sessionmaker(bind=engine)
-
+# Base.metadata.drop_all(bind=engine)
+# Base.metadata.create_all(bind=engine)
+Session = sessionmaker(bind=engine, autoflush=False)
 
 session = Session()
 
-
-
+# import pdb; pdb.set_trace()
 
 session.close()
+

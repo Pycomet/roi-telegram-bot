@@ -2,6 +2,7 @@
 from config import *
 from models import User, Transaction, session
 from datetime import date
+from coinbase.wallet.client import Client
 
 client = Client(API_KEY, API_SECRET)
 
@@ -45,39 +46,13 @@ def create_user(message):
         first_name = message.from_user.first_name,
         btc_balance = 0,
         xrp_balance = 0,
-        address = address,
+        address = address.address,
         address_id = address.id,
         date_joined = str(date.today()),
     )
     session.add(user)
     return user
 
-
-def get_transactions_info(user, action, amount):
-    """
-    Create Transaction From Api Info
-    """
-
-    # Generate API Transaction ID
-    ###
-    db_tansaction = session.query(Transaction).get(user)
-
-    api_transaction = account.get_address_transactions(user.address_id).data
-
-    for each in api_transaction:
-
-        transaction = Transaction(
-            transaction_id = each.id,  # Change this to transaction id
-            currency = each.amount.currency,
-            amount = each.amount.amount,
-            title = each.details.title,
-            hash = each.network.hash,
-            status = each.status,
-            date_created = str(date.today()),
-            owner = user,
-        )
-        session.add(transaction)
-    return transaction
 
 
 
@@ -136,7 +111,47 @@ def invest_btc(user, amount):
 
 
 
-        
+
+
+###################HISTORY####
+
+def retrieve_transactions(user):
+    """
+    Update user transactions
+    """
+    transaction_ids = [i.id for i in user.transaction]
+
+    # From api endpoint
+    api_transaction = account.get_address_transactions(user.address_id).data
+
+    for each in api_transaction:
+
+        if each.id not in transaction_ids:
+            Transaction(
+                id = each.id,  # Change this to transaction id
+                currency = each.amount.currency,
+                amount = each.amount.amount,
+                title = each.details.title,
+                hash = each.network.hash,
+                status = each.status,
+                date_created = str(date.today()),
+                owner = user,
+            )
+        else:
+            pass
+    
+    session.add(user)
+
+
+def get_transactions_history(user):
+    """
+    Return the list of user transactions
+    """
+    retrieve_transactions(user)
+
+    history = user.transaction
+    return history
+
 
 
 
