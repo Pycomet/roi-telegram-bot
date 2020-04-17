@@ -5,9 +5,11 @@ from sqlalchemy.orm import sessionmaker, relationship, backref
 
 from sqlalchemy import Column, Integer, String, ForeignKey
 
+from config import *
+
 Base = declarative_base()
 
-engine = create_engine("sqlite:///database.db", echo=True)
+engine = create_engine(DATABASE_URL, echo=False)
 # Change encho to false before deploying
 
 # user_transaction_association = Table('user_transactions', Base.metadata,
@@ -25,8 +27,9 @@ class User(Base):
     first_name = Column(String)
     btc_balance = Column(Integer)
     xrp_balance = Column(Integer)
-    date_joined = Column(String)
     address = Column(String)
+    address_id = Column(String)
+    date_joined = Column(String)
     transaction = relationship("Transaction", backref="owner")
 
     def __repr__(self):
@@ -40,7 +43,12 @@ class Transaction(Base):
     __tablename__ = 'transaction'
 
     id = Column(Integer, primary_key=True)
+    transaction_id = Column(String(50))
+    currency = Column(String(3))
     amount = Column(Integer)
+    title = Column(String)
+    hash = Column(String)
+    status = Column(String)
     date_created = Column(String(50))
     user_id = Column(Integer, ForeignKey('user.id'))
     # user = relationship("User", back_populates="transaction")
@@ -53,6 +61,8 @@ Session = sessionmaker(bind=engine)
 
 
 session = Session()
+
+
 
 
 session.close()

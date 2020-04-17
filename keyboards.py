@@ -1,6 +1,4 @@
-import emoji
-from telebot import types
-
+from config import *
 
 def main_menu():
     "Return Main Menu Keyboard"
@@ -11,10 +9,11 @@ def main_menu():
     c = types.KeyboardButton(emoji.emojize("Withdraw  :outbox_tray:", use_aliases=True))
     d = types.KeyboardButton(emoji.emojize("Invest  :briefcase:", use_aliases=True))
     e = types.KeyboardButton(emoji.emojize("Help  :bulb:", use_aliases=True))
+    f = types.KeyboardButton(emoji.emojize("History  :book:", use_aliases=True))
     
     keyboard.add(a,b)
     keyboard.add(c,d)
-    keyboard.add(e)
+    keyboard.add(e, f)
 
     return keyboard
 
@@ -31,12 +30,12 @@ def deposit_keyboard():
 
 
 
-def withdraw_keyboard():
+def withdraw_keyboard(btc, xrp):
     "Return Coin Option"
 
     keyboard = types.InlineKeyboardMarkup(row_width=1)
-    a = types.InlineKeyboardButton(text="Bitcoin(BTC) Balance", callback_data="3")
-    b = types.InlineKeyboardButton(text="Ripplecoin(XRP) Balance", callback_data="4")
+    a = types.InlineKeyboardButton(text="Bitcoin(BTC) Balance --> %.4f" % (float(btc)), callback_data="3")
+    b = types.InlineKeyboardButton(text="Ripplecoin(XRP) Balance --> %.4f" % (float(xrp)), callback_data="4")
     keyboard.add(a,b)
 
     return keyboard
