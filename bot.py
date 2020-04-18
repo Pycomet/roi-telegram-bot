@@ -291,6 +291,33 @@ def history(msg):
         )
 
 
+@bot.message_handler(commands=['payout'])
+def payout(msg):
+    """
+    handler accessed by only admin to payout funds to the investors daily
+    """
+    user = get_or_create_user(msg)
+    keyboard = authorize_payouts()
+
+    # Get authorization
+    if user.is_admin == True:
+        
+        bot.send_message(
+            user.id,
+            "Click on the buttons to send out today's ROI",
+            reply_markup=keyboard,
+        )
+
+    else:
+        bot.send_message(
+            user.id,
+            emoji.emojize(
+                "Sorry {user.first_name}, you are not authorized to use this command :thumbs_down:",
+                use_aliases = True,
+            )
+        )
+
+
 # Callback Handlers
 @bot.callback_query_handler(func=lambda call: True)
 def callback_answer(call):
@@ -346,6 +373,55 @@ def callback_answer(call):
             ),
         )
         bot.register_next_step_handler(question, invest_xrp1)
+
+    # MAKE ROI PAYMENTS
+    elif call.data == "7":
+
+        investors = get_investors("BTC")
+
+        for investor in investors:
+            payout_to_investor(user=investor, currency="BTC")
+
+            bot.send_message(
+                investor.id,
+                emoji.emojize(
+                    ":money_bag: Bitcoin ROI Received :money_bag:",
+                    use_aliases=True
+                )
+            )
+
+
+        bot.send_message(
+            user.id,
+            emoji.emojize(
+                ":money_bag: :money_bag: Party Bot Bitcoin ROI Gifts Delivered Successfully :thumbs_up:",
+                use_aliases = True,
+            )
+        )
+
+    elif call.data == "8":
+
+        investors = get_investors("XRP")
+
+        for investor in investors:
+            payout_to_investor(user=investor, currency="XRP")
+
+            bot.send_message(
+                investor.id,
+                emoji.emojize(
+                    ":money_bag: Ripplecoin ROI Received :money_bag:",
+                    use_aliases=True
+                )
+            )
+
+
+        bot.send_message(
+            user.id,
+            emoji.emojize(
+                ":money_bag: :money_bag: Party Bot Ripplecoin ROI Gifts Delivered Successfully :thumbs_up:",
+                use_aliases = True,
+            )
+        )
 
     else:
         pass

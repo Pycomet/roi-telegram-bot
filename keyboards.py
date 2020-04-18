@@ -53,3 +53,13 @@ def invest_keyboard():
     return keyboard
 
     
+
+def authorize_payouts():
+    "Return Investors Option"
+
+    keyboard= types.InlineKeyboardMarkup(row_width=1)
+    a = types.InlineKeyboardButton(text="Payout to Bitcoin Investors", callback_data="7")
+    b = types.InlineKeyboardButton(text="Payout to Ripplecoin Investors", callback_data="8")
+    keyboard.add(a,b)
+
+    return keyboard

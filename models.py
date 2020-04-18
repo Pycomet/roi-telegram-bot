@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, backref
 
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
 
 from config import *
 
@@ -25,6 +25,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     first_name = Column(String)
+    is_admin = Column(Boolean)
     btc_balance = Column(Integer)
     xrp_balance = Column(Integer)
     

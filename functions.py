@@ -39,6 +39,7 @@ def create_user(message):
     user = User(
         id = int(entity_id),
         first_name = message.from_user.first_name,
+        is_admin = False,
 
         btc_balance = 0,
         xrp_balance = 0,
@@ -267,50 +268,36 @@ def get_transactions_history(user):
     history = user.transaction
     return history
 
+def get_investors(currency):
+    """
+    Returns a list of investors
+    """
+    if currency == "BTC":
+        investors = session.query(User).filter(User.btc_investment > 0)
+        return investors
 
+    else:
+        investors = session.query(User).filter(User.btc_investment > 0)
+        return investors
 
+def payout_to_investor(user, currency):
+    """
+    Payout ROI to investors shortlisted 
+    """
+    if currency == "BTC":
 
+        payout = float(user.btc_investment) * 0.01
+        add_btc_balance(user=user, amount=payout)
+        return "Done"
 
+    elif currency == "XRP":
 
+        payout = float(user.xrp_investment) * 0.01
+        add_xrp_balance(user=user, amount=payout)
+        return "Done"
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# def get_or_create_user(msg):
-#     """
-#     Get Or Create User
-#     """
-#     user = User.get_user(msg.from_user.id)
-    
-#     if user is None:
-
-#         # Creating new user
-#         user = User(
-#             name = msg.from_user.first_name,
-#             id = msg.from_user.id,
-#         )
-
-#     return user
+    else:
+        return "Error"
 
 
 
