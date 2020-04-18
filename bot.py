@@ -27,11 +27,11 @@ def start(msg):
     session.commit()
 
 
-
 @bot.message_handler(regexp='^Balance')
 def balance(msg):
     "Returns Balance"
     user = get_or_create_user(msg)
+
     bot.send_message(
         msg.from_user.id,
         """
@@ -41,7 +41,6 @@ def balance(msg):
     %.4f XRP
         """ % (float(user.btc_balance), float(user.xrp_balance))
     )
-
 
 
 @bot.message_handler(regexp='^Deposit')
@@ -76,42 +75,39 @@ def btc_withdraw1(user):
     "Ask How much To Withdraw"
     question = bot.send_message(
         user.id,
-        "How much do you wish to withdraw from your available balance?",
+        "Please paste the wallet you wish to receive the funds?",
     )
     bot.register_next_step_handler(question, btc_withdraw2)
 
 
 def btc_withdraw2(msg):
     """
-    Checks user available balance and request if available balance enough to make payment
+    Receive address and pay to address
     """
     try:
-        amount = float(msg.text)
+        address = float(msg.text)
         user = get_or_create_user(msg)
+        amount = user.btc_balance
 
-        if float(user.btc_balance) >= amount:
-            bot.send_message(
-                msg.from_user.id,
-                emoji.emojize(
-                    """
-            :hourglass_flowing_sand: Processing Payment, you will be notified shortly. :hourglass:
-                    """,
-                    use_aliases = True,
-                )
+        bot.send_message(
+            user.id,
+            emoji.emojize(
+                """
+        :hourglass_flowing_sand: Processing Payment, you will be notified shortly.
+
+                """,
+                use_aliases = True,
             )
+        )
 
-            ##### SEND OUT FUNDS TO THE USER ACCOUNT
+        ##### SEND OUT FUNDS TO THE USER ACCOUNT
+        status = withdraw_btc(user=user, address=address, amount=amount)
 
-        else:
-            bot.send_message(
-                msg.from_user.id,
-                emoji.emojize(
-                    """
-            :warning: Insufficient balance. Give it another shot after checking your balance.
-                    """,
-                    use_aliases=True,
-                ),
-            )
+        bot.send_message(
+            user.id,
+            "%s" % (status,),
+
+        )
 
     except:
         bot.send_message(
@@ -123,7 +119,7 @@ def btc_withdraw2(msg):
                 use_aliases=True,
             ),
         )
-    
+
 
 ###########XRP WITHDRAW###########################
 
@@ -138,35 +134,32 @@ def xrp_withdraw1(user):
 
 def xrp_withdraw2(msg):
     """
-    Checks user available balance and request if available balance enough to make payment
+    Receive address and pay to address
     """
     try:
-        amount = float(msg.text)
+        address = float(msg.text)
         user = get_or_create_user(msg)
+        amount = user.xrp_balance
 
-        if float(user.btc_balance) >= amount:
-            bot.send_message(
-                user.id,
-                emoji.emojize(
-                    """
-            :hourglass_flowing_sand: Processing Payment, you will be notified shortly. :hourglass:
-                    """,
-                    use_aliases = True,
-                )
+        bot.send_message(
+            user.id,
+            emoji.emojize(
+                """
+        :hourglass_flowing_sand: Processing Payment, you will be notified shortly.
+
+                """,
+                use_aliases = True,
             )
+        )
 
-            ##### SEND OUT FUNDS TO THE USER ACCOUNT
+        ##### SEND OUT FUNDS TO THE USER ACCOUNT
+        status = withdraw_xrp(user=user, address=address, amount=amount)
 
-        else:
-            bot.send_message(
-                user.id,
-                emoji.emojize(
-                    """
-            :warning: Insufficient balance. Give it another shot after checking your balance.
-                    """,
-                    use_aliases=True,
-                ),
-            )
+        bot.send_message(
+            user.id,
+            "%s" % (status,),
+
+        )
 
     except:
         bot.send_message(
@@ -179,6 +172,8 @@ def xrp_withdraw2(msg):
             ),
         )
 
+
+########################################################################
 
 @bot.message_handler(regexp='^Invest')
 def invest(msg):
@@ -194,7 +189,61 @@ def invest(msg):
         reply_markup=keyboard,
     )
 
+###########BTC INVEST######
+def invest_btc1(msg):
+    """Invest Amount"""
+    amount = msg.text
+    user = get_or_create_user(msg)
 
+    if float(user.btc_balance) >= float(amount):
+
+        invest_btc(user=user, amount=amount)
+
+        bot.send_message(
+            user.id,
+            "Congratulations, your account has been added to the investors list to recieve 1% daily (Monday - Friday)"
+        )
+
+        ## Add to list for admin payout
+
+    else:
+        bot.send_message(
+            user.id,
+            emoji.emojize(
+                """
+        :warning: Insufficient balance. Give it another shot after checking your balance.
+                """,
+                use_aliases=True,
+            ),
+        )
+
+###########XRP INVEST######
+def invest_xrp1(msg):
+    """Invest Amount"""
+    amount = msg.text
+    user = get_or_create_user(msg)
+
+    if float(user.xrp_balance) >= float(amount):
+
+        invest_xrp(user=user, amount=amount)
+
+        bot.send_message(
+            user.id,
+            "Congratulations, your account has been added to the investors list to recieve 1% daily (Monday - Friday)"
+        )
+
+        ## Add to list for admin payout
+
+    else:
+        bot.send_message(
+            user.id,
+            emoji.emojize(
+                """
+        :warning: Insufficient balance. Give it another shot after checking your balance.
+                """,
+                use_aliases=True,
+            ),
+        )
 
 
 @bot.message_handler(regexp='^Help')
@@ -206,7 +255,6 @@ def help(msg):
         msg.from_user.id,
         "Please call your mother for help. haha",
     )
-
 
 
 
@@ -232,11 +280,11 @@ def history(msg):
             user.id,
             emoji.emojize(
                 f"""
-    {transaction.title}
-Amount :point_right: {transaction.amount} {transaction.currency}
-Status :point_right: {transaction.status}
-Hash :point_right: {transaction.hash}
-Created on ----> {transaction.date_created}
+        {transaction.title}
+    Amount :point_right: {transaction.amount} {transaction.currency}
+    Status :point_right: {transaction.status}
+    Hash :point_right: {transaction.hash}
+    Created on ----> {transaction.date_created}
                 """,
                 use_aliases=True,
             ),
@@ -255,14 +303,14 @@ def callback_answer(call):
     if call.data == "1":
         bot.send_message(
             user.id,
-            "Send Your Bitcoin to this address --> adkjandkjandkahsdajsbdjasdh",
+            "Send Your Bitcoin to this address --> %s" % (user.btc_address),
         )
 
     # XRP DEPOSIT
     elif call.data == "2":
         bot.send_message(
             user.id,
-            "Send Your Ripplecoin to this address --> jdfnhjfhjdfbjdbfjdfhdfjh",
+            "Send Your Ripplecoin to this address --> %s" % (user.xrp_address),
         )
 
     # BTC WITHDRAW REQUEST
@@ -275,7 +323,30 @@ def callback_answer(call):
         
         xrp_withdraw1(user)
 
+    # BTC INVEST REQUEST
+    elif call.data == "5":
+        
+        question = bot.send_message(
+            user.id,
+            emoji.emojize(
+                ":money_bag: How much BTC do you wish to invest?",
+                use_aliases=True
+            ),
+        )
+        bot.register_next_step_handler(question, invest_btc1)
 
-print("bot polling...")
+    # XRP INVEST REQUEST
+    elif call.data == "6":
 
-bot.polling(none_stop=True)
+        question = bot.send_message(
+            user.id,
+            emoji.emojize(
+                ":money_bag: How much XRP do you wish to invest?",
+                use_aliases=True
+            ),
+        )
+        bot.register_next_step_handler(question, invest_xrp1)
+
+    else:
+        pass
+

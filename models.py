@@ -27,8 +27,16 @@ class User(Base):
     first_name = Column(String)
     btc_balance = Column(Integer)
     xrp_balance = Column(Integer)
-    address = Column(String)
-    address_id = Column(String)
+    
+    btc_address = Column(String)
+    xrp_address = Column(String)
+
+    btc_address_id = Column(String)
+    xrp_address_id = Column(String)
+
+    btc_investment = Column(Integer)
+    xrp_investment = Column(Integer)
+
     date_joined = Column(String)
     transaction = relationship("Transaction", backref="owner")
 
@@ -57,6 +65,8 @@ class Transaction(Base):
 
 # Base.metadata.drop_all(bind=engine)
 # Base.metadata.create_all(bind=engine)
+
+
 Session = sessionmaker(bind=engine, autoflush=False)
 
 session = Session()
