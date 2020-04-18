@@ -8,7 +8,6 @@ idna==2.9
 itsdangerous==1.1.0
 Jinja2==2.11.2
 MarkupSafe==1.1.1
-pkg-resources==0.0.0
 psycopg2-binary==2.8.5
 pycryptodome==3.9.7
 pyTelegramBotAPI==3.6.7
