@@ -273,11 +273,11 @@ def get_investors(currency):
     Returns a list of investors
     """
     if currency == "BTC":
-        investors = session.query(User).filter(User.btc_investment > 0)
+        investors = session.query(User).filter(User.btc_investment > 0).all()
         return investors
 
     else:
-        investors = session.query(User).filter(User.btc_investment > 0)
+        investors = session.query(User).filter(User.xrp_investment > 0).all()
         return investors
 
 def payout_to_investor(user, currency):

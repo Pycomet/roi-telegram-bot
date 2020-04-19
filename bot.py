@@ -312,7 +312,7 @@ def payout(msg):
         bot.send_message(
             user.id,
             emoji.emojize(
-                "Sorry {user.first_name}, you are not authorized to use this command :thumbs_down:",
+                f"Sorry {user.first_name}, you are not authorized to use this command :thumbs_down:",
                 use_aliases = True,
             )
         )
