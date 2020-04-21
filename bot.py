@@ -195,7 +195,7 @@ def invest_btc1(msg):
     amount = msg.text
     user = get_or_create_user(msg)
 
-    if float(user.btc_balance) >= float(amount):
+    if float(user.btc_balance) >= float(amount) and float(amount) >= 0.001:
 
         invest_btc(user=user, amount=amount)
 

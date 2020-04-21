@@ -46,7 +46,7 @@ def invest_keyboard():
     "Return Options"
 
     keyboard = types.InlineKeyboardMarkup(row_width=1)
-    a = types.InlineKeyboardButton(text="Invest Bitcoin(BTC)", callback_data="5")
+    a = types.InlineKeyboardButton(text="Invest Bitcoin(BTC) - Minimum is 0.001", callback_data="5")
     b = types.InlineKeyboardButton(text="Invest Ripplecoin(XRP)", callback_data="6")
     keyboard.add(a,b)
 
